@@ -17,7 +17,7 @@ const subscriptionSchema = new mongoose.Schema(
     currency: {
       type: String,
       enum: ['USD', 'EUR', 'BDT', 'GBP'],
-      default: 'USD'
+      default: 'EUR'
     },
     frequency: {
       type: String,
@@ -74,7 +74,7 @@ const subscriptionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-subscriptionSchema.pre('save', function (next) {
+subscriptionSchema.pre('save', function () {
   // auto calculate renewal date if missing
 
   if (!this.renewalDate) {
@@ -92,12 +92,12 @@ subscriptionSchema.pre('save', function (next) {
     );
   }
 
-  // auto update the  status if renewal date has passed
-  if (this.renewalDate < Date.now()) {
+  // Auto-update the status if renewal date has passed
+  if (this.renewalDate < new Date()) {
     this.status = 'expired';
   }
 
-  next();
+  // next();
 });
 
 const Subscription = mongoose.model('Subscription', subscriptionSchema);
